@@ -1,0 +1,182 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Robot API",
+    "description": "API for all things robots",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:3001",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Robots",
+      "description": "API for robots"
+    },
+    {
+      "name": "Fight",
+      "description": "API for robot fights"
+    }
+  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/robots": {
+      "get": {
+        "tags": ["Robots"],
+        "summary": "Get all robots and their overall records",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Robots"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Robots"],
+        "description": "Create new robot",
+        "parameters": [
+          {
+            "name": "robot",
+            "in": "body",
+            "description": "Robot that we want to create",
+            "schema": {
+              "$ref": "#/definitions/Robot"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Robot"
+            }
+          }
+        }
+      }
+    },
+    "/robots/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "ID of robot that we want to get",
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "tags": ["Robots"],
+        "summary": "Get specific robot",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Robot"
+            }
+          }
+        }
+      }
+    },
+    "/fight": {
+      "post": {
+        "tags": ["Fight"],
+        "description": "Robot fight!",
+        "parameters": [
+          {
+            "name": "robots",
+            "in": "body",
+            "description": "Robots that we want to participate",
+            "schema": {
+              "$ref": "#/definitions/Robots"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Fight"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Weapon": {
+      "required": ["name", "strength", "accuracy"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "strength": {
+          "type": "string"
+        },
+        "accuracy": {
+          "type": "string"
+        }
+      }
+    },
+    "Robot": {
+      "required": ["id", "name", "color", "attack_weapon", "defense_weapon", "wins", "losses"],
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "attack_weapon": {
+          "$ref": "#/definitions/Weapon"
+        },
+        "defense_weapon": {
+          "$ref": "#/definitions/Weapon"
+        },
+        "wins": {
+          "type": "integer"
+        },
+        "losses": {
+          "type": "integer"
+        }
+      }
+    },
+    "Robots": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Robot"
+      }
+    },
+    "Fight": {
+      "required": ["id", "winner", "participants"],
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "winner": {
+          "type": "string"
+        },
+        "participants": {
+          "$ref": "#/definitions/Robots"
+        },
+        "round_log": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

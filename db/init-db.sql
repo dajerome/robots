@@ -27,7 +27,7 @@ create table robots (
 -- fights
 create table fights (
   id serial primary key,
-  winner_robot_id int not null references robots (id)
+  winner_robot_id int references robots (id)
 );
 
 -- fight participants

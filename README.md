@@ -14,7 +14,7 @@ The project supports hot reloading.
 ### Start and initialize database:
 
 To run the postgres database, make sure you have docker installed: https://docs.docker.com/get-docker/
-Then, from within the db directory, run `./start-pg.sh`
+Then, from within the `db` directory, run `./start-pg.sh`
 
 ### Install dependencies:
 
@@ -25,7 +25,23 @@ Then, from within the db directory, run `./start-pg.sh`
 `npm run start`
 
 App: `localhost:3000`
-API `localhost:3001`
+API: `localhost:3001`
+Swagger document: `localhost:3001/api`
+
+### Sample requests:
+
+`robots.postman_collection.json` contains sample postman requests
+
+## Api next steps:
+- Impovements can be made to the api in the following areas
+  - validation of create robot input
+  - api for update and delete robot
+  - api for weapons (create weapons etc)
+  - cleanup fight logic
+  - fight logic is not correctly handling health
+  - round log is not correct (due to above)
+  - add round log to db
+  - api for fights (get past fight results etc)
 
 ## Requirements:
 
