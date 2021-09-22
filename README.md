@@ -11,6 +11,11 @@ The project supports hot reloading.
 
 ## Setup
 
+### Start and initialize database:
+
+To run the postgres database, make sure you have docker installed: https://docs.docker.com/get-docker/
+Then, from within the db directory, run `./start-pg.sh`
+
 ### Install dependencies:
 
 `npm install`
