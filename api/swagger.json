@@ -17,8 +17,8 @@
       "description": "API for robots"
     },
     {
-      "name": "Fight",
-      "description": "API for robot fights"
+      "name": "Battles",
+      "description": "API for robot battles"
     }
   ],
   "schemes": ["http"],
@@ -33,14 +33,18 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/Robots"
+              "properties": {
+                "robots": {
+                  "$ref": "#/definitions/Robots"
+                }
+              }
             }
           }
         }
       },
       "post": {
         "tags": ["Robots"],
-        "description": "Create new robot",
+        "summary": "Create new robot",
         "parameters": [
           {
             "name": "robot",
@@ -51,12 +55,15 @@
             }
           }
         ],
-        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/Robot"
+              "properties": {
+                "robot": {
+                  "$ref": "#/definitions/Robot"
+                }
+              }
             }
           }
         }
@@ -79,16 +86,55 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/Robot"
+              "properties": {
+                "robot": {
+                  "$ref": "#/definitions/Robot"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Robots"],
+        "summary": "Update robot",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "robot": {
+                  "$ref": "#/definitions/Robot"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Robots"],
+        "summary": "Delete robot",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
       }
     },
-    "/fight": {
+    "/battle": {
       "post": {
-        "tags": ["Fight"],
-        "description": "Robot fight!",
+        "tags": ["Battle"],
+        "summary": "Robot battle!",
         "parameters": [
           {
             "name": "robots",
@@ -99,12 +145,15 @@
             }
           }
         ],
-        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/Fight"
+              "properties": {
+                "battle": {
+                  "$ref": "#/definitions/Battle"
+                }
+              }
             }
           }
         }
@@ -158,7 +207,7 @@
         "$ref": "#/definitions/Robot"
       }
     },
-    "Fight": {
+    "Battle": {
       "required": ["id", "winner", "participants"],
       "properties": {
         "id": {

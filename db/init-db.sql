@@ -24,17 +24,17 @@ create table robots (
   unique(name)
 );
 
--- fights
-create table fights (
+-- battles
+create table battles (
   id serial primary key,
   winner_robot_id int references robots (id)
 );
 
--- fight participants
-create table fight_participants (
-  fight_id int not null references fights (id),
+-- battle participants
+create table battle_participants (
+  battle_id int not null references battles (id),
   robot_id int not null references robots (id),
-  unique(fight_id, robot_id)
+  unique(battle_id, robot_id)
 );
 
 -- prepopulate weapons

@@ -66,51 +66,99 @@ module.exports = function() {
   }
 
   exports.createRobot = async function(input) {
-    try {
-      const result = await pool.query(`
-        insert into robots (name, color, attack_weapon_id, defense_weapon_id)
-        select
-          '${input.name}',
-          '${input.color}',
-          (select id from weapons where name = '${input.attack_weapon.name}'),
-          (select id from weapons where name = '${input.defense_weapon.name}')
-        returning id;
-      `);
-      return {success: true, id: result.rows[0].id};
-    }
-    catch(e) {
-      console.error(e);
-      return {success: false, reason: e.message};
-    }
+    const result = await pool.query(`
+      insert into robots (name, color, attack_weapon_id, defense_weapon_id)
+      select
+        '${input.name}',
+        '${input.color}',
+        (select id from weapons where name = '${input.attack_weapon.name}'),
+        (select id from weapons where name = '${input.defense_weapon.name}')
+      returning id;
+    `);
+
+    return result.rows[0].id;
   }
 
-  exports.createFight = async function(input) {
-    try {
-      let fightResult;
-      if (input.winner_name) {
-        fightResult = await pool.query(`
-          insert into fights (winner_robot_id)
-          select id from robots where name = '${input.winner_name}'
-          returning id
-        `);
+  exports.updateRobot = async function(input) {
+    let updateClause = [];
+    for (let prop in input.robot) {
+      if (['name', 'color'].includes(prop)) {
+        updateClause.push(`${prop} = '${input.robot[prop]}'`);
       }
-      else {
-        fightResult = await pool.query(`
-          insert into fights (winner_robot_id) values (null)
-          returning id
-        `);
+      else if (['attack_weapon', 'defense_weapon'].includes(prop)) {
+        if (input.robot[prop].name) {
+          updateClause.push(`${prop}_id = (select id from weapons where name = '${input.robot[prop].name}')`);
+        }
       }
+    }
+    if (updateClause.length == 0) {
+      return {message: 'No valid robot properties to update'};
+    }
 
-      await pool.query(`
-        insert into fight_participants (fight_id, robot_id)
-        select ${fightResult.rows[0].id}, id from robots where name in ('${input.names.join("','")}')
+    const result = await pool.query(`
+      update robots
+      set ${updateClause.join(',')}
+      where id = ${input.id}
+      returning *
+    `);
+
+    return {
+      robot: result.rows[0],
+      message: result.rows[0] && result.rows[0].id == input.id ? `${result.rows[0].name} updated` : `Robot with id ${input.id} not found`
+    };
+  }
+
+  exports.deleteRobot = async function(input) {
+    const result = await pool.query(`
+      with battles_to_delete as (
+        select battle_id from battle_participants where robot_id = ${input.id}
+      ),
+      delete_participants as (
+        delete from battle_participants p
+        where exists (
+          select 1 from battles_to_delete d
+          where d.battle_id = p.battle_id
+        )
+      ),
+      delete_battles as (
+        delete from battles b
+        where exists (
+          select 1 from battles_to_delete d
+          where d.battle_id = b.id
+        )
+      ),
+      delete_robots as (
+        delete from robots where id = ${input.id}
+        returning *
+      )
+      select name, count(*) as robot_delete_count from delete_robots group by 1
+    `);
+
+    return result.rows[0] && result.rows[0].robot_delete_count == 1 ? `${result.rows[0].name} deleted` : `Robot with id ${input.id} not found`;
+  }
+
+  exports.saveBattle = async function(input) {
+    let battleResult;
+    if (input.winner) {
+      battleResult = await pool.query(`
+        insert into battles (winner_robot_id)
+        select id as winner_id from robots where name = '${input.winner_name}'
+        returning id
       `);
-      return {success: true, id: fightResult.rows[0].id};
     }
-    catch(e) {
-      console.error(e);
-      return {success: false, reason: e.message};
+    else {
+      battleResult = await pool.query(`
+        insert into battles (winner_robot_id) values (null)
+        returning id
+      `);
     }
+
+    await pool.query(`
+      insert into battle_participants (battle_id, robot_id)
+      select ${battleResult.rows[0].id}, id from robots where name in ('${input.names.join("','")}')
+    `);
+
+    return battleResult.rows[0].id;
   }
 
   return exports;

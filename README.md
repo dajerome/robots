@@ -32,16 +32,9 @@ Swagger document: `localhost:3001/api`
 
 `robots.postman_collection.json` contains sample postman requests
 
-## Api next steps:
-- Impovements can be made to the api in the following areas
-  - validation of create robot input
-  - api for update and delete robot
-  - api for weapons (create weapons etc)
-  - cleanup fight logic
-  - fight logic is not correctly handling health
-  - round log is not correct (due to above)
-  - add round log to db
-  - api for fights (get past fight results etc)
+### Run api tests:
+
+From within the test directory, run `node robots-tests.js` & `node battles-tests.js`
 
 ## Requirements:
 

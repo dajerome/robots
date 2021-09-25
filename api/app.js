@@ -7,6 +7,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var indexRouter = require('./routes/index');
+var robotRouter = require('./routes/robots');
+var battleRouter = require('./routes/battles');
 
 var app = express();
 
@@ -17,6 +19,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/robots', robotRouter);
+app.use('/battle', battleRouter);
 
 // swagger documentation
 app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
